@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PulseWave Studio | Cyberpunk Web DAW & Modular Synthesizer</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2224%22>🎛️</text></svg>">
+</head>
+<body>
+
+  <!-- Top Transport Bar -->
+  <header>
+    <div class="brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-title">PULSEWAVE</span>
+    </div>
+
+    <div class="transport-controls">
+      <button id="btnPlay" class="btn-transport primary">▶ Play</button>
+      <button id="btnStop" class="btn-transport">⏹ Stop</button>
+      <button id="btnRecord" class="btn-transport btn-record">⏺ Record Audio</button>
+
+      <div class="tempo-controls">
+        <label>TEMPO</label>
+        <input type="range" id="bpmSlider" min="60" max="180" value="124" style="width: 90px;">
+        <span id="bpmValue" class="tempo-val">124</span>
+        <span style="font-size: 11px; color: var(--text-dim);">BPM</span>
+      </div>
+
+      <div class="tempo-controls">
+        <label>MASTER</label>
+        <input type="range" id="masterVolSlider" min="0" max="1" step="0.05" value="0.8" style="width: 80px;">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Studio Layout -->
+  <main>
+
+    <!-- Top Dashboard: Visualizer + Modular Synth Controls -->
+    <section class="top-dashboard">
+
+      <!-- Sound-Reactive Canvas Visualizer -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">🌊 Sound-Reactive Visualizer</span>
+          <select id="visModeSelect" class="vis-mode-select">
+            <option value="spectrum">Neon Spectrum Bars</option>
+            <option value="waveform">Electric Oscilloscope</option>
+            <option value="portal">Radial Pulse Portal</option>
+          </select>
+        </div>
+        <div class="visualizer-container">
+          <canvas id="visCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Synth Sound Sculptor Controls -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">🎛️ Modular Synth Engine</span>
+          <span style="font-size: 11px; color: var(--accent-cyan);">Polyphonic Lead & Bass</span>
+        </div>
+
+        <div class="synth-controls-grid">
+          <!-- Waveform -->
+          <div class="control-group">
+            <span class="control-label">Oscillator</span>
+            <div class="wave-selector">
+              <button class="wave-btn active" data-wave="sawtooth">Saw</button>
+              <button class="wave-btn" data-wave="square">Square</button>
+              <button class="wave-btn" data-wave="triangle">Tri</button>
+              <button class="wave-btn" data-wave="sine">Sine</button>
+            </div>
+          </div>
+
+          <!-- Filter -->
+          <div class="control-group">
+            <span class="control-label">Filter</span>
+            <div class="slider-row">
+              <label>Cutoff <span id="cutoffVal">2.5k</span></label>
+              <input type="range" id="cutoffSlider" min="200" max="8000" step="50" value="2500">
+            </div>
+            <div class="slider-row">
+              <label>Resonance (Q)</label>
+              <input type="range" id="resSlider" min="0.5" max="15" step="0.5" value="3.5">
+            </div>
+          </div>
+
+          <!-- ADSR Envelope -->
+          <div class="control-group">
+            <span class="control-label">ADSR Envelope</span>
+            <div class="slider-row">
+              <label>Attack</label>
+              <input type="range" id="attackSlider" min="0.005" max="0.5" step="0.01" value="0.02">
+            </div>
+            <div class="slider-row">
+              <label>Release</label>
+              <input type="range" id="releaseSlider" min="0.05" max="0.8" step="0.05" value="0.2">
+            </div>
+          </div>
+
+          <!-- Effects Rack -->
+          <div class="control-group">
+            <span class="control-label">Echo / Delay</span>
+            <div class="slider-row">
+              <label>Wet Send</label>
+              <input type="range" id="delaySlider" min="0" max="0.8" step="0.05" value="0.35">
+            </div>
+            <div class="slider-row">
+              <label>Feedback</label>
+              <input type="range" id="feedbackSlider" min="0" max="0.7" step="0.05" value="0.3">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Preset Selector Bar -->
+    <section class="presets-bar">
+      <span style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Groove Presets:</span>
+      <button class="btn-preset active" data-preset="synthwave">🌆 Synthwave Sunset</button>
+      <button class="btn-preset" data-preset="cyberpunk">⚡ Cyberpunk 2088</button>
+      <button class="btn-preset" data-preset="lofi">☕ Lo-Fi Midnight</button>
+      <button class="btn-preset" data-preset="chiptune">👾 8-Bit Arcade</button>
+      <button id="btnRandom" class="btn-preset btn-random">🎲 Algorithmic Randomize</button>
+    </section>
+
+    <!-- 16-Step Beat & Melody Sequencer -->
+    <section class="sequencer-panel">
+      <div class="panel-header">
+        <span class="panel-title">🎼 16-Step Sequencer</span>
+        <span style="font-size: 11px; color: var(--text-dim);">4/4 Time Signature • 16-Beat Cycle</span>
+      </div>
+
+      <!-- Step Indicator Bar -->
+      <div class="sequencer-header-steps">
+        <div style="font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Tracks</div>
+        <div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div>
+        <div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div>
+        <div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div>
+        <div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div>
+      </div>
+
+      <!-- Track Rows -->
+      <div id="sequencerRows" style="display: flex; flex-direction: column; gap: 8px;"></div>
+    </section>
+
+    <!-- Playable Piano Roll Keyboard -->
+    <section class="keyboard-section">
+      <div class="keyboard-controls-row">
+        <span class="panel-title">🎹 Playable Synth Keys</span>
+        <span style="font-size: 11px; color: var(--text-dim);">Play with mouse or keys [A] [W] [S] [E] [D] [F] [T] [G] [Y] [H] [U] [J] [K]</span>
+      </div>
+
+      <!-- Keys Container -->
+      <div class="keys-container">
+        <!-- White keys -->
+        <div class="piano-key" data-note="C4">A<br>C4</div>
+        <div class="piano-key" data-note="D4">S<br>D4</div>
+        <div class="piano-key" data-note="E4">D<br>E4</div>
+        <div class="piano-key" data-note="F4">F<br>F4</div>
+        <div class="piano-key" data-note="G4">G<br>G4</div>
+        <div class="piano-key" data-note="A4">H<br>A4</div>
+        <div class="piano-key" data-note="B4">J<br>B4</div>
+        <div class="piano-key" data-note="C5">K<br>C5</div>
+        <div class="piano-key" data-note="D5">L<br>D5</div>
+
+        <!-- Black keys (positioned absolutely) -->
+        <div class="piano-key black" data-note="C#4" style="left: 7.5%;">W<br>C#</div>
+        <div class="piano-key black" data-note="D#4" style="left: 18.5%;">E<br>D#</div>
+        <div class="piano-key black" data-note="F#4" style="left: 41%;">T<br>F#</div>
+        <div class="piano-key black" data-note="G#4" style="left: 52%;">Y<br>G#</div>
+        <div class="piano-key black" data-note="A#4" style="left: 63%;">U<br>A#</div>
+        <div class="piano-key black" data-note="C#5" style="left: 85%;">O<br>C#</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer & Status Bar -->
+  <footer>
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      <span>Web Audio Engine Active • 44.1 kHz 16-Bit Stereo</span>
+    </div>
+    <div>
+      <span>Press <kbd>Space</kbd> to Play/Pause • Click steps to toggle rhythms</span>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
